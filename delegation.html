@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://mosque-api.5jfwpmvt9w.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="theme-color" content="#0b6b4f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+  <title>التفويض | جامع الحي</title>
+</head>
+<body>
+<header class="topbar safe-top">
+  <div class="topbar-brand"><div class="mini-logo">↗</div><div><strong class="app-title">التفويض المؤقت</strong><div class="muted small">للمؤذن البديل</div></div></div>
+</header>
+
+<main class="page delegation-page">
+  <section class="admin-hero compact-hero">
+    <span class="eyebrow">مؤذن بديل</span>
+    <h1>تفويض واضح ومحدود</h1>
+    <p>حدد المدة والصلاة فقط، ثم انسخ الرابط وأرسله للمؤذن البديل.</p>
+  </section>
+
+  <div id="globalStatus" class="status-box hidden" role="status" aria-live="polite"></div>
+
+  <section class="card delegation-create-card">
+    <div class="section-heading">
+      <span class="section-kicker">إنشاء تفويض</span>
+      <h2>الأيام والصلوات</h2>
+    </div>
+    <form id="delegationForm">
+      <div class="hijri-range delegation-day-picker" aria-label="اختيار يوم التفويض بالتاريخ الهجري">
+        <section class="hijri-date-card">
+          <div class="hijri-card-head"><span>اختر اليوم</span><small id="FromWeekday" class="weekday-badge">—</small></div>
+          <div class="hijri-select-grid">
+            <label><span>اليوم</span><select id="FromDay" aria-label="يوم التفويض"></select></label>
+            <label class="month-select"><span>الشهر</span><select id="FromMonth" aria-label="شهر التفويض"></select></label>
+            <label><span>السنة</span><select id="FromYear" aria-label="سنة التفويض"></select></label>
+          </div>
+          <small class="muted picker-calendar-note">تقويم أم القرى · يظهر اسم يوم الأسبوع بجانب رقم اليوم</small>
+        </section>
+        <input type="hidden" id="delegationFrom" required>
+      </div>
+
+      <fieldset class="prayers delegation-prayers" id="delegationPrayers">
+        <legend>صلوات هذا اليوم</legend>
+        <div class="prayer-check-grid">
+          <label><input type="checkbox" value="FAJR"><span>الفجر</span></label>
+          <label><input type="checkbox" value="DHUHR"><span>الظهر</span></label>
+          <label><input type="checkbox" value="ASR"><span>العصر</span></label>
+          <label><input type="checkbox" value="MAGHRIB"><span>المغرب</span></label>
+          <label><input type="checkbox" value="ISHA"><span>العشاء</span></label>
+        </div>
+        <small id="delegationPrayerHint" class="muted delegation-hint"></small>
+      </fieldset>
+
+      <button class="btn btn-secondary btn-lg" id="addDelegationDayBtn" type="button">+ إضافة هذا اليوم للتفويض</button>
+      <section class="delegation-schedule-builder" aria-live="polite">
+        <div class="schedule-builder-head"><strong>أيام التفويض المختارة</strong><small>يمكن أن تختار صلوات مختلفة لكل يوم</small></div>
+        <div id="delegationScheduleList" class="delegation-schedule-list"><p class="muted">لم تضف أي يوم بعد.</p></div>
+      </section>
+
+      <label class="field"><span>الرمز السري للتفويض</span><input id="delegationPin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" required placeholder="4 إلى 8 أرقام"></label>
+      <div id="delegationStatus" class="status-box hidden" role="status" aria-live="polite"></div>
+      <button class="btn btn-primary btn-xl" id="createDelegationBtn" type="submit">إنشاء التفويض</button>
+    </form>
+
+    <div id="delegationCreated" class="delegation-created hidden">
+      <div class="created-icon">✓</div>
+      <div><strong>تم إنشاء التفويض</strong><p>الرابط مخفي للحماية. انسخه من الزر التالي.</p></div>
+      <button type="button" class="btn btn-secondary" id="copyDelegationBtn">نسخ رابط التفويض</button>
+      <div id="delegationCopyStatus" class="status-box hidden" role="status" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-heading"><span class="section-kicker">الحالة الآن</span><h2>التفويض الحالي</h2><p>التفويض الملغي أو المنتهي يختفي تلقائيًا.</p></div>
+    <div id="delegationsList" class="admin-list"></div>
+  </section>
+</main>
+
+<div id="delegationCopyModal" class="modal-layer hidden" aria-hidden="true">
+  <section class="modal-panel delegation-copy-modal" role="dialog" aria-modal="true" aria-labelledby="delegationCopyTitle">
+    <button type="button" class="modal-close-text modal-close-danger" data-delegation-copy-close>إغلاق</button>
+    <div class="delegation-copy-icon">✓</div>
+    <h2 id="delegationCopyTitle">تم نسخ رابط التفويض</h2>
+    <p>تستطيع إرساله للمؤذن المفوض مع الرقم السري.</p>
+    <small>سيغلق هذا التنبيه تلقائيًا خلال 7 ثوانٍ.</small>
+  </section>
+</div>
+
+<nav class="bottom-nav safe-bottom">
+  <a href="./dashboard.html"><span>⌂</span><small>الرئيسية</small></a>
+  <a href="./delegation.html" class="active"><span>↗</span><small>التفويض</small></a>
+  <a href="./iqama.html"><span>⏱</span><small>إعدادات الإقامة</small></a>
+</nav>
+<script src="./ummalqura-data.js" defer></script>
+<script src="./app.js" defer></script>
+</body>
+</html>
