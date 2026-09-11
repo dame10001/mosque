@@ -1,0 +1,21 @@
+<!doctype html><html lang="ar" dir="rtl"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://telegram.org; style-src 'self'; connect-src https://mosque-api.5jfwpmvt9w.workers.dev; img-src 'self' data:; object-src 'none'; base-uri 'self'"><meta name="theme-color" content="#0b6b4f"><link rel="stylesheet" href="./styles.css"><title>إعدادات المؤذن</title></head>
+<body class="tg-settings-page">
+<main class="tg-settings-shell">
+  <section class="tg-settings-hero"><div><span class="section-kicker">Telegram Mini App</span><h1>إعدادات المؤذن</h1><p id="tgSettingsWelcome">جاري تحميل الإعدادات…</p></div><span class="tg-settings-badge">⚙️</span></section>
+  <div id="tgSettingsError" class="status-box hidden" role="status"></div>
+  <nav class="tg-settings-tabs"><button class="active" data-tg-tab="times">المواقيت</button><button data-tg-tab="delegation">التفويض</button></nav>
+
+  <section data-tg-page="times">
+    <section class="card tg-settings-card"><div class="section-heading compact"><h2>الأذان والإقامة</h2><p>وقت الـAPI يبقى المرجع الرسمي، والتأخير يضاف فوقه. الإقامة تُحسب بعد الأذان الفعلي.</p></div><div id="tgPrayerSettings" class="tg-prayer-settings"></div></section>
+    <section class="card tg-settings-card"><label class="field"><span>مهلة تأكيد الأذان</span><div class="inline-number"><input id="tgAdhanWindow" type="number" min="1" max="120" inputmode="numeric"><span>دقيقة</span></div><small>بعد انتهاء المهلة يُغلق رابط تأكيد الأذان تلقائيًا.</small></label></section>
+    <button id="tgSaveSettings" class="btn btn-primary btn-xl full-width" type="button">حفظ المواقيت</button><div id="tgSettingsStatus" class="status-box hidden"></div>
+  </section>
+
+  <section class="hidden" data-tg-page="delegation">
+    <section class="card tg-settings-card"><div class="section-heading compact"><h2>إنشاء تفويض</h2><p>حدد كل يوم والصلوات التي تريد تفويضها. تستطيع اختيار صلوات مختلفة لكل يوم.</p></div><div id="tgDelegationDays" class="tg-delegation-days"></div><button id="tgAddDay" class="btn btn-secondary full-width" type="button">+ إضافة يوم</button><label class="field tg-pin-field"><span>الرمز السري PIN</span><input id="tgDelegationPin" type="password" inputmode="numeric" pattern="[0-9]*" minlength="4" maxlength="8" placeholder="4 إلى 8 أرقام"></label><button id="tgCreateDelegation" class="btn btn-primary btn-xl full-width" type="button">إنشاء التفويض</button><div id="tgDelegationStatus" class="status-box hidden"></div></section>
+    <section id="tgCreatedDelegation" class="card tg-created-card hidden"><span class="state state-success">تم إنشاء التفويض</span><h3>الرابط جاهز</h3><p>أرسله للمؤذن البديل مع الـPIN بشكل منفصل.</p><input id="tgCreatedLink" class="copy-link-input" readonly><button id="tgCopyCreatedLink" class="btn btn-primary full-width" type="button">نسخ الرابط</button></section>
+    <section class="tg-active-delegations"><div class="section-heading compact"><h2>التفويضات الحالية</h2></div><div id="tgDelegationsList"></div></section>
+  </section>
+</main>
+<script src="https://telegram.org/js/telegram-web-app.js"></script><script src="./telegram-settings.js" defer></script></body></html>
