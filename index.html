@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://mosque-api.5jfwpmvt9w.workers.dev; object-src 'none'; base-uri 'self'; form-action 'self'"><meta name="theme-color" content="#0b6b4f">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="جامع الحي">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css?v=127">
+  <title>تسجيل الدخول | جامع الحي</title>
+</head>
+<body class="auth-page">
+  <main class="auth-shell">
+    <section class="brand-card">
+      <div class="mosque-mark" aria-hidden="true">🕌</div>
+      <span class="brand-pill">نظام جامع الحي</span>
+      <h1>حيّاك الله</h1>
+      <p>إدارة بسيطة وآمنة لإشعارات الأذان والإقامة</p>
+    </section>
+
+    <section class="card auth-card" aria-labelledby="login-title">
+      <div class="section-heading">
+        <span class="section-kicker">دخول آمن</span>
+        <h2 id="login-title">تسجيل الدخول</h2>
+        <p>للمؤذن والإدارة فقط</p>
+      </div>
+
+      <form id="loginForm" novalidate>
+        <label class="field">
+          <span>اسم المستخدم</span>
+          <input id="username" name="username" type="text" autocomplete="username"
+                 inputmode="text" minlength="3" required placeholder="مثال: admin">
+        </label>
+
+        <label class="field">
+          <span>كلمة المرور</span>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password"
+                   autocomplete="current-password" minlength="8" required
+                   placeholder="••••••••">
+            <button type="button" class="icon-btn" id="togglePassword" aria-label="إظهار كلمة المرور">👁️</button>
+          </div>
+        </label>
+
+        <button class="btn btn-primary btn-xl" id="loginBtn" type="submit">دخول</button>
+        <div id="loginStatus" class="status-box hidden" role="status" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <p class="tiny-note">كلمة المرور لا تُحفظ داخل الواجهة.</p>
+  </main>
+  <script src="./app.js?v=127" defer></script>
+</body>
+</html>
