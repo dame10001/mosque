@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>جامع الحي</title><script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#f4f7f4;--card:#fff;--ink:#17231c;--muted:#748078;--accent:#1f6b4f;--soft:#e7f2ec;--line:#e2e8e3;--yellow:#fff5d8}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,sans-serif;color:var(--ink)}main{max-width:620px;margin:auto;padding:18px 14px 40px}.hero{padding:18px 4px}.hero h1{margin:0;font-size:24px}.state{display:inline-block;margin-top:8px;background:var(--soft);padding:7px 10px;border-radius:999px;font-size:13px}.card{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:18px;margin-bottom:12px;box-shadow:0 8px 28px #2035290a}.next{background:linear-gradient(145deg,#fff,#eef6f1)}.big{font-size:34px;font-weight:850;margin:7px 0}.muted{color:var(--muted)}.prayer{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--line)}.prayer:last-child{border:0}.alert{background:var(--yellow)}button{width:100%;border:0;border-radius:15px;padding:14px;background:var(--accent);color:#fff;font:inherit;font-weight:800;margin-top:12px}.hidden{display:none}.error{padding:14px;background:#fff0f0;border-radius:16px;color:#8b2e2e}
+</style></head><body><main>
+<div class="hero"><h1 id="mosque">🕌 جامع الحي</h1><span class="state">🟢 النظام يعمل</span></div>
+<div id="error" class="error hidden"></div>
+<div id="active"></div>
+<div id="next" class="card next"><div class="muted">الصلاة القادمة</div><div class="big">—</div><div class="muted">جار التحميل…</div></div>
+<div class="card"><b>أوقات اليوم</b><div id="prayers"></div></div>
+</main><script>
+const API_BASE="https://masjid-notifier.5jfwpmvt9w.workers.dev";
+const tg=window.Telegram?.WebApp; if(tg){tg.ready();tg.expand()}
+const initData=tg?.initData||"";
+const ar={fajr:"الفجر",dhuhr:"الظهر",asr:"العصر",maghrib:"المغرب",isha:"العشاء",test:"اختبار"};
+async function req(path,opt={}){const r=await fetch(API_BASE+path,{...opt,headers:{"Content-Type":"application/json","X-Telegram-Init-Data":initData,...(opt.headers||{})}});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"فشل الطلب");return j}
+function nowHM(){return new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Riyadh",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date())}
+async function load(){try{
+ const [p,e]=await Promise.all([req("/api/prayers"),req("/api/mini/events")]);
+ prayers.innerHTML=p.prayers.map(x=>`<div class="prayer"><div><b>${ar[x.prayer]}</b><div class="muted">الإقامة ${x.iqama_display}</div></div><b>${x.adhan_display}</b></div>`).join("");
+ const hm=nowHM(); const upcoming=p.prayers.find(x=>x.adhan_time>=hm)||p.prayers[0];
+ next.innerHTML=upcoming?`<div class="muted">الصلاة القادمة</div><div class="big">${ar[upcoming.prayer]}</div><div><b>${upcoming.adhan_display}</b> <span class="muted">— الإقامة ${upcoming.iqama_display}</span></div>`:`<div class="muted">لا توجد أوقات مسجلة لليوم</div>`;
+ const pending=e.events.filter(x=>["alerted","pending"].includes(x.status)&&x.scheduled_time<=hm).sort((a,b)=>a.scheduled_time.localeCompare(b.scheduled_time));
+ active.innerHTML=pending.map(x=>`<div class="card alert"><div class="muted">🔔 حان الوقت</div><div class="big">${x.type==="adhan"?"أذان":"إقامة"} ${ar[x.prayer]||x.prayer}</div><div>🟡 بانتظار التأكيد</div><button onclick="confirmEvent('${x.id}','${x.type}')">${x.type==="adhan"?"🕌 تم الأذان":"✅ تمت الإقامة"}</button></div>`).join("");
+ }catch(err){error.textContent=err.message;error.classList.remove("hidden")}}
+async function confirmEvent(id,type){try{await req(`/api/${type}/confirm`,{method:"POST",body:JSON.stringify({event_id:id})});tg?.HapticFeedback?.notificationOccurred("success");await load()}catch(e){alert(e.message)}}
+if(!initData){error.textContent="افتح لوحة المؤذن من داخل تيليجرام عبر زر البوت.";error.classList.remove("hidden")}else{load();setInterval(load,30000)}
+</script></body></html>
